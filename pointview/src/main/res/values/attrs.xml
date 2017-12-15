@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PointView">
+        <attr name="currentPointTextColor" format="color"/>
+        <attr name="scaleTextColor" format="color"/>
+        <attr name="rulerColor" format="color"/>
+        <attr name="radius" format="dimension"/>
+        <attr name="scoreDrawable" format="reference"/>
+        <attr name="maxPoint" format="integer"/>
+        <attr name="rulerWidth" format="dimension"/>
+        <attr name="topAndBottomTextSize" format="dimension"/>
+        <attr name="pointTextSize" format="dimension"/>
+        <attr name="currentPoint" format="integer"/>
+        <attr name="topAndBottomTextColor" format="color"/>
+        <attr name="title" format="string"/>
+        <attr name="bottomText" format="string"/>
+    </declare-styleable>
+</resources>
