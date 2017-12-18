@@ -1,18 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.cdc4512.pointview.MainActivity">
 
-    <com.example.pointview.PointView
-        android:id="@+id/view1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:title="芝麻信用"
-        app:topAndBottomTextColor="#d46666"
-        app:radius="70dp" />
+        <com.example.pointview.PointView
+            android:id="@+id/view1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:title="芝麻信用"
+            app:topAndBottomTextColor="#d46666"
+            app:radius="100dp" />
 
-</FrameLayout>
+
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置当前分值"/>
+
+        <SeekBar
+            android:layout_marginTop="10dp"
+            android:id="@+id/seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/point"
+                android:layout_width="200dp"
+                android:hint="输入分值，例如:100"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/pointSet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/max"
+                android:layout_width="200dp"
+                android:hint="输入最大分值，例如:100"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/maxSet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

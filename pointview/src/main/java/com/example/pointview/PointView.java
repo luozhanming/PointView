@@ -15,10 +15,14 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.EditText;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +31,13 @@ import java.util.List;
  */
 
 public class PointView extends View {
+    /**
+     * 1.制定需求
+     * 2.根据需求定义属性
+     * 3.重写onMeasure定义View的大小
+     * 4.重写onDraw方法
+     * 5.制定动效
+     */
 
     private int mCurrentPointTextColor;
     private int mOtherTextColor;
@@ -58,6 +69,7 @@ public class PointView extends View {
 
     public PointView(Context context) {
         super(context);
+        init();
     }
 
     public PointView(Context context, @Nullable AttributeSet attrs) {
@@ -79,14 +91,16 @@ public class PointView extends View {
         mRulerPaint.setStrokeCap(Paint.Cap.ROUND);
         mRulerPaint.setAntiAlias(true);
         mRulerPaint.setStrokeWidth(mRulerWidth);
+        mRulerPaint.setAntiAlias(true);
 
         mProgressPaint = new Paint();
         mProgressPaint.setStyle(Paint.Style.STROKE);
         mProgressPaint.setStrokeCap(Paint.Cap.ROUND);
-        mRulerPaint.setAntiAlias(true);
         mProgressPaint.setStrokeWidth(mProgressWidth);
 
         mRulerPath = new Path();
+        RectF rect = new RectF(-mRadius, -mRadius, mRadius, mRadius);
+        mRulerPath.addArc(rect, -225f, 270f);
 
         mScores = new ArrayList<>();
         mScores.add(1f);
@@ -98,7 +112,7 @@ public class PointView extends View {
         mScaleTextColor = typedArray.getColor(R.styleable.PointView_scaleTextColor, 0);
         mRulerColor = typedArray.getColor(R.styleable.PointView_scaleTextColor, Utils.getThemeColor(getContext(), Utils.COLOR_PRIMARY));
         mTopAndBottomTextColor = typedArray.getColor(R.styleable.PointView_topAndBottomTextColor, Utils.getThemeColor(getContext(), Utils.COLOR_PRIMARY_DARK));
-        mRadius = typedArray.getDimension(R.styleable.PointView_radius, 200);
+        mRadius = typedArray.getDimension(R.styleable.PointView_radius, 100);
         mRulerWidth = typedArray.getDimension(R.styleable.PointView_rulerWidth, 20);
         mTopAndBottomTextSize = typedArray.getDimension(R.styleable.PointView_topAndBottomTextSize, 16);
         mPointTextSize = typedArray.getDimension(R.styleable.PointView_pointTextSize, 36);
@@ -106,7 +120,7 @@ public class PointView extends View {
         title = typedArray.getString(R.styleable.PointView_title);
         bottomText = typedArray.getString(R.styleable.PointView_bottomText);
 
-        mProgressWidth = mRulerWidth + 20;
+        mProgressWidth = mRulerWidth * 2;
         mMaxPoint = typedArray.getInteger(R.styleable.PointView_maxPoint, 100);
         int scoreDrawableId = typedArray.getResourceId(R.styleable.PointView_scoreDrawable, R.mipmap.home_find_icon_cup);
         if (scoreDrawableId != 0) {
@@ -117,8 +131,9 @@ public class PointView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = (int) (9 / 3f * mRadius);
+        // int width = (int) (9 / 3f * mRadius);
         int height = (int) (7 / 3f * mRadius);
+        int width = MeasureSpec.getSize(widthMeasureSpec);
         setMeasuredDimension(width, height);
     }
 
@@ -226,9 +241,7 @@ public class PointView extends View {
 
     private void drawRuler(Canvas canvas) {
         canvas.save();
-        RectF rect = new RectF(-mRadius, -mRadius, mRadius, mRadius);
         mRulerPaint.setStyle(Paint.Style.STROKE);
-        mRulerPath.addArc(rect, -225f, 270f);
         canvas.drawPath(mRulerPath, mRulerPaint);
 
         PathMeasure pathMeasure = new PathMeasure(mRulerPath, false);
