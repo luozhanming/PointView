@@ -35,6 +35,11 @@ public class Utils {
         return (int) Math.ceil(dp * dm.scaledDensity);
     }
 
+    /**
+     * 获取APP主题颜色
+     * @param ctx
+     * @param type 应用主题色类型
+     * */
     public static int getThemeColor(Context ctx, @ColorType int type) {
         TypedValue value = new TypedValue();
         if (type == COLOR_PRIMARY) {

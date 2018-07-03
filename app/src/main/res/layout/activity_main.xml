@@ -14,7 +14,7 @@
             android:layout_gravity="center"
             app:title="芝麻信用"
             app:topAndBottomTextColor="#d46666"
-            app:radius="100dp" />
+            app:radius="80dp" />
 
 
 
@@ -44,11 +44,15 @@
             <EditText
                 android:id="@+id/point"
                 android:layout_width="200dp"
+                android:textSize="14sp"
+                android:lines="1"
+                android:inputType="number"
                 android:hint="输入分值，例如:100"
                 android:layout_height="wrap_content" />
 
             <Button
                 android:id="@+id/pointSet"
+                android:text="设置"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
@@ -61,11 +65,15 @@
             <EditText
                 android:id="@+id/max"
                 android:layout_width="200dp"
+                android:textSize="14sp"
+                android:lines="1"
+                android:inputType="number"
                 android:hint="输入最大分值，例如:100"
                 android:layout_height="wrap_content" />
 
             <Button
                 android:id="@+id/maxSet"
+                android:text="设置"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>

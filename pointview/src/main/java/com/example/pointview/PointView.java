@@ -1,6 +1,7 @@
 package com.example.pointview;
 
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -11,18 +12,16 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.os.Build;
 import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.EditText;
 
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,26 +38,26 @@ public class PointView extends View {
      * 5.制定动效
      */
 
-    private int mCurrentPointTextColor;
-    private int mOtherTextColor;
-    private int mScaleTextColor;
-    private int mRulerColor;  //进度尺颜色
-    private int mTopAndBottomTextColor;
+    private int mCurrentPointTextColor;     //分值颜色
+    private int mOtherTextColor;            //其他文字颜色
+    private int mScaleTextColor;            //刻度字体颜色
+    private int mRulerColor;                //进度尺颜色
+    private int mTopAndBottomTextColor;     //
 
-    private float mRadius;   //半径
-    private float mRulerWidth;  //刻度尺宽度
-    private float mProgressWidth;
-    private float mPointTextSize;
-    private float mTopAndBottomTextSize;
+    private float mRadius;                  //半径
+    private float mRulerWidth;              //刻度尺宽度
+    private float mProgressWidth;           //进度条宽度
+    private float mPointTextSize;           //分值字体大小
+    private float mTopAndBottomTextSize;    //顶部和底部字体颜色
 
-    private List<Float> mScores;   //目标
-    private Bitmap mScoreBitmap;  //目标达成显示图标
+    private List<Float> mScores;            //目标
+    private Bitmap mScoreBitmap;            //目标达成显示图标
 
     private Paint mTextPaint;
     private Paint mProgressPaint;
     private Paint mRulerPaint;
 
-    private Path mRulerPath;
+    private Path mRulerPath;                //刻度尺的绘制路径
 
     private int mMaxPoint; //最大分值
     private int mCurrentPoint = -1;   //当前分值
@@ -66,10 +65,11 @@ public class PointView extends View {
     private String title = "";
     private String bottomText = "";
 
+    private ObjectAnimator animator;
+
 
     public PointView(Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
 
     public PointView(Context context, @Nullable AttributeSet attrs) {
@@ -109,7 +109,7 @@ public class PointView extends View {
     private void parseAttrs(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PointView);
         mCurrentPointTextColor = typedArray.getColor(R.styleable.PointView_currentPointTextColor, Utils.getThemeColor(getContext(), Utils.COLOR_ACCENT));
-        mScaleTextColor = typedArray.getColor(R.styleable.PointView_scaleTextColor, 0);
+        mScaleTextColor = typedArray.getColor(R.styleable.PointView_scaleTextColor, Color.parseColor("#000000"));
         mRulerColor = typedArray.getColor(R.styleable.PointView_scaleTextColor, Utils.getThemeColor(getContext(), Utils.COLOR_PRIMARY));
         mTopAndBottomTextColor = typedArray.getColor(R.styleable.PointView_topAndBottomTextColor, Utils.getThemeColor(getContext(), Utils.COLOR_PRIMARY_DARK));
         mRadius = typedArray.getDimension(R.styleable.PointView_radius, 100);
@@ -131,7 +131,6 @@ public class PointView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // int width = (int) (9 / 3f * mRadius);
         int height = (int) (7 / 3f * mRadius);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         setMeasuredDimension(width, height);
@@ -231,12 +230,25 @@ public class PointView extends View {
                 PathMeasure rulerMessure = new PathMeasure(mRulerPath, false);
                 Paint bitmapPaint = new Paint();
                 rulerMessure.getPosTan(rulerMessure.getLength() * scores, pos, tan);
+                adaptScoreBitmap();
                 int width = mScoreBitmap.getWidth();
                 int height = mScoreBitmap.getHeight();
                 canvas.drawBitmap(mScoreBitmap, pos[0] - width / 2, pos[1] - height / 2, bitmapPaint);
             }
         }
         canvas.restore();
+    }
+
+    /**
+     * 调整达标显示图片的大小
+     */
+    private Bitmap adaptScoreBitmap() {
+        Bitmap bitmap = Bitmap.createBitmap(88, 88, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawBitmap(mScoreBitmap, new Rect(0, 0, mScoreBitmap.getWidth(), mScoreBitmap.getHeight()), new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), new Paint());
+        mScoreBitmap.recycle();
+        mScoreBitmap = bitmap;
+        return mScoreBitmap;
     }
 
     private void drawRuler(Canvas canvas) {
@@ -366,11 +378,19 @@ public class PointView extends View {
 
     public void setCurrentPointWithAnimation(final int point, int duration) {
         if (point > mMaxPoint) {
-            throw new IllegalArgumentException("Point set must less than max point.");
+            throw new IllegalArgumentException("Point must less than max point!");
         }
-        ObjectAnimator animator = ObjectAnimator.ofInt(this, "currentPoint", mCurrentPoint, point)
+        animator = ObjectAnimator.ofInt(this, "currentPoint", mCurrentPoint, point)
                 .setDuration(duration);
         animator.start();
+    }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (animator != null && animator.isRunning()) {
+            animator.pause();
+        }
     }
 }
