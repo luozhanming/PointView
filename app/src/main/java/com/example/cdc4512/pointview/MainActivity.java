@@ -3,6 +3,7 @@ package com.example.cdc4512.pointview;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -67,10 +68,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(this,"设置值超过最大值",Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if(TextUtils.isEmpty(this.point.getText())){
+                    Toast.makeText(this,"设置值不能为空",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 view.setCurrentPointWithAnimation(point, 2000);
                 seekBar.setProgress(point);
                 break;
             case R.id.maxSet:
+                if(TextUtils.isEmpty(this.max.getText())){
+                    Toast.makeText(this,"最大值不能为空",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 view.setMaxPoint(Integer.valueOf(max.getText().toString()));
                 seekBar.setMax(Integer.valueOf(max.getText().toString()));
                 break;
